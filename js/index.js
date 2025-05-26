@@ -176,6 +176,8 @@ function stopGame(){
     if(terminate){
         alert('結束遊戲');
         clearInterval(id);
+        // 刷新頁面
+        window.location.reload();
     }
 }
 
