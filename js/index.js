@@ -23,12 +23,20 @@ let snake = {
     y: undefined,
 };
 
+let food = {
+    x:undefined,
+    y:undefined,
+}
+
 const strokeWidth = 1;
 (function init(){
-    snake.x = Math.floor(Math.random() * cols) * cellWidth + p0.x;
-    snake.y = Math.floor(Math.random() * rows) * cellHeight + p0.y;
+    // snake.x = Math.floor(Math.random() * cols) * cellWidth + p0.x;
+    // snake.y = Math.floor(Math.random() * rows) * cellHeight + p0.y;
+    snake = getRandomPosition();
+    food = getRandomPosition();
     displaySnake(snake.x,snake.y);
     displayGrid();
+    displayFood(food.x,food.y);
 })();
 
 let direction = {
@@ -62,44 +70,6 @@ window.addEventListener('keydown',function(e){
     }
 }) 
 
-// window.addEventListener('keydown',function(e){
-//     let keyCode = e.keyCode;
-//     if(keyCode >= 37 && keyCode <= 40){
-//         //const offset = strokeWidth / 2;
-//         ctx.clearRect(0,0,canvas.width,canvas.height);
-//         /**
-//          * 左 : 37
-//          * 上 : 38
-//          * 右 : 39
-//          * 下 : 40
-//          */
-//         switch(e.keyCode){
-//             case 37: {
-//                 if(!isCollidedX(snake.x))
-//                     snake.x -= 10;
-//                 break;
-//             }
-//             case 38: {
-//                 if(!isCollidedY(snake.y))
-//                     snake.y -= 10;
-//                 break;
-//             }
-//             case 39: {
-//                 if(!isCollidedX(snake.x))
-//                     snake.x += 10;
-//                 break;
-//             }
-//             case 40: {
-//                 if(!isCollidedY(snake.y))
-//                     snake.y += 10;
-//                 break;
-//             }
-//         }
-//         console.log(snake.x);
-//         displaySnake(snake.x,snake.y);
-//         displayGrid();
-//     }
-// })
 function displaySnake(x,y){
     ctx.fillStyle = 'red';
     ctx.fillRect(x,y,cellWidth,cellHeight); 
@@ -186,7 +156,7 @@ function updateSnakePosition(){
     }
     displaySnake(snake.x,snake.y,cellWidth,cellHeight); 
 }
-let id;
+
 function stopGame(){
     if(terminate){
         alert('結束遊戲');
@@ -194,13 +164,37 @@ function stopGame(){
     }
 }
 
+function displayFood(x,y){
+    ctx.fillStyle = 'green';
+    ctx.fillRect(x,y,cellWidth,cellHeight);
+}
+function getRandomPosition(){
+    let position = {
+        x: Math.floor(Math.random() * cols) * cellWidth + p0.x,
+        y: Math.floor(Math.random() * rows) * cellHeight + p0.y,
+    }
+    return position;
+}
+
+function collidedWithFood(){
+    if(snake.x === food.x && snake.y === food.y){
+        return true;
+    }
+    return false;
+}
 function move(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     
     updateSnakePosition();    
-
+    
+    if(collidedWithFood()){
+        food = getRandomPosition();
+        displayFood(food.x,food.y);
+    }
+    displayFood(food.x,food.y);
+    
     displayGrid();
     
     stopGame();
 }
-id = setInterval(move,100);
+const id = setInterval(move,100);
