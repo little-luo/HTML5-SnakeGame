@@ -18,10 +18,10 @@ let p0 = {
 p0.x = canvas.width / 2 - (cols * cellWidth) / 2;
 p0.y = canvas.height / 2 - (rows * cellHeight) / 2;
 
-let snake = {
+let snakeBody = [{
     x: undefined,
     y: undefined,
-};
+}];
 
 let food = {
     x:undefined,
@@ -30,11 +30,11 @@ let food = {
 
 const strokeWidth = 1;
 (function init(){
-    // snake.x = Math.floor(Math.random() * cols) * cellWidth + p0.x;
-    // snake.y = Math.floor(Math.random() * rows) * cellHeight + p0.y;
-    snake = getRandomPosition();
+    // snakeBody[0].x = Math.floor(Math.random() * cols) * cellWidth + p0.x;
+    // snakeBody[0].y = Math.floor(Math.random() * rows) * cellHeight + p0.y;
+    snakeBody[0] = getRandomPosition();
     food = getRandomPosition();
-    displaySnake(snake.x,snake.y);
+    displaySnake(snakeBody);
     displayGrid();
     displayFood(food.x,food.y);
 })();
@@ -70,9 +70,11 @@ window.addEventListener('keydown',function(e){
     }
 }) 
 
-function displaySnake(x,y){
+function displaySnake(snakeBody){
     ctx.fillStyle = 'red';
-    ctx.fillRect(x,y,cellWidth,cellHeight); 
+    snakeBody.forEach(body => {
+        ctx.fillRect(body.x,body.y,cellWidth,cellHeight); 
+    });
 }
 
 function displayGrid(){
@@ -121,40 +123,53 @@ function updateDirection(str){
 }
 
 let terminate = false;
+let newPosition = {
+    x: snakeBody[0].x,
+    y: snakeBody[0].y,
+}
 function updateSnakePosition(){
     if(direction.left){
-        if(!isCollidedX(snake.x)){
-            snake.x -= 10;
+        if(!isCollidedX(snakeBody[0].x)){
+           newPosition.x = snakeBody[0].x - 10;
         }else{
-            snake.x = p0.x;
+            newPosition.x = p0.x;
             terminate = true;
         }
+        newPosition.y = snakeBody[0].y;
     }
     if(direction.right){
-        if(!isCollidedX(snake.x)){
-            snake.x += 10;
+        if(!isCollidedX(snakeBody[0].x)){
+             newPosition.x = snakeBody[0].x + 10;
         }else{
-            snake.x = p0.x + (cols - 1) * cellWidth;
+            newPosition.x = p0.x + (cols - 1) * cellWidth;
             terminate = true;
         }
+        newPosition.y = snakeBody[0].y;
     }
     if(direction.up){
-        if(!isCollidedY(snake.y)){
-            snake.y -= 10;
+        if(!isCollidedY(snakeBody[0].y)){
+            newPosition.y = snakeBody[0].y - 10;
         }else{
-            snake.y = p0.y
+            newPosition.y = p0.y
             terminate = true;
         }
+        newPosition.x = snakeBody[0].x;
     }
     if(direction.down){
-        if(!isCollidedY(snake.y)){
-            snake.y += 10;
+        if(!isCollidedY(snakeBody[0].y)){
+            newPosition.y = snakeBody[0].y + 10;
         }else{
-            snake.y = p0.y + (rows - 1) * cellHeight;
+            newPosition.y = p0.y + (rows - 1) * cellHeight;
             terminate = true;
         }
+        newPosition.x = snakeBody[0].x;
     }
-    displaySnake(snake.x,snake.y,cellWidth,cellHeight); 
+    // 這裡根據是否吃到食物決定是否 pop
+    snakeBody.unshift({...newPosition});
+    if (!collidedWithFood()) {
+        snakeBody.pop();
+    }
+    displaySnake(snakeBody); 
 }
 
 function stopGame(){
@@ -177,7 +192,7 @@ function getRandomPosition(){
 }
 
 function collidedWithFood(){
-    if(snake.x === food.x && snake.y === food.y){
+    if(snakeBody[0].x === food.x && snakeBody[0].y === food.y){
         return true;
     }
     return false;
