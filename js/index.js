@@ -28,6 +28,8 @@ let food = {
     y:undefined,
 }
 
+let score = 0;
+
 const strokeWidth = 1;
 (function init(){
     // snakeBody[0].x = Math.floor(Math.random() * cols) * cellWidth + p0.x;
@@ -37,6 +39,7 @@ const strokeWidth = 1;
     displaySnake(snakeBody);
     displayGrid();
     displayFood(food.x,food.y);
+    displayScore();
 })();
 
 let direction = {
@@ -168,6 +171,8 @@ function updateSnakePosition(){
     snakeBody.unshift({...newPosition});
     if (!collidedWithFood()) {
         snakeBody.pop();
+    }else{
+        changeScore();
     }
     
     displaySnake(snakeBody); 
@@ -210,10 +215,24 @@ function collideWithSelf(){
     }
     return false;
 }
+
+function displayScore(){
+    ctx.fillStyle = 'black';
+    ctx.font = '20px serif';
+    ctx.fillText(score,p0.x + cols * cellWidth,p0.y - 1 * cellHeight);
+    ctx.textAlign = 'right';
+}
+
+function changeScore(){
+    score += 10;
+}
+
 function move(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     
     updateSnakePosition();    
+    
+    stopGame();
     
     if(collidedWithFood()){
         food = getRandomPosition();
@@ -225,6 +244,7 @@ function move(){
 
     collideWithSelf();
     
-    stopGame();
+    displayScore();
+
 }
 const id = setInterval(move,100);
