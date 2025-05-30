@@ -227,6 +227,15 @@ function changeScore(){
     score += 10;
 }
 
+function speedUp(){
+    console.log(speed);
+    if(speed > 40){
+        speed -= 5;
+        clearInterval(id);
+        id = setInterval(move,speed);
+    }
+}
+
 function move(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     
@@ -247,4 +256,6 @@ function move(){
     displayScore();
 
 }
-const id = setInterval(move,100);
+let speed = 100;
+let id = setInterval(move,speed);
+const speedUpId = setInterval(speedUp,5000);
