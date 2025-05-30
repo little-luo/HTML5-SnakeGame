@@ -169,6 +169,7 @@ function updateSnakePosition(){
     if (!collidedWithFood()) {
         snakeBody.pop();
     }
+    
     displaySnake(snakeBody); 
 }
 
@@ -199,6 +200,16 @@ function collidedWithFood(){
     }
     return false;
 }
+
+function collideWithSelf(){
+    for(let i = 1; i < snakeBody.length; i++){
+        if(snakeBody[0].x === snakeBody[i].x && snakeBody[0].y === snakeBody[i].y){
+            snakeBody = snakeBody.slice(0, i);
+            return true;
+        }
+    }
+    return false;
+}
 function move(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     
@@ -211,6 +222,8 @@ function move(){
     displayFood(food.x,food.y);
     
     displayGrid();
+
+    collideWithSelf();
     
     stopGame();
 }
