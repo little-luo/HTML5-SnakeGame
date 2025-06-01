@@ -42,10 +42,11 @@ const COLOR = {
 const opposites = {
   up: "down",
   right: "left",
-  bottom: "up",
+  down: "up",
   left: "right",
 };
 
+// 對遊戲初始化
 (function init() {
   gameState.snakeBody[0] = getRandomPosition();
   gameState.food = getRandomPosition();
@@ -55,6 +56,7 @@ const opposites = {
   displayScore();
 })();
 
+// 使用者按下方向鍵切換方向
 window.addEventListener("keydown", function (e) {
   let keyCode = e.keyCode;
   if (keyCode >= 37 && keyCode <= 40) {
@@ -79,6 +81,7 @@ window.addEventListener("keydown", function (e) {
   }
 });
 
+// 遊戲開始時，貪吃蛇移動速度隨時間遞增
 let speedUp_id = undefined;
 window.addEventListener("keydown", function (e) {
   let keyCode = e.keyCode;
@@ -90,6 +93,7 @@ window.addEventListener("keydown", function (e) {
   }
 });
 
+// 渲染貪吃蛇
 function displaySnake(snakeBody) {
   ctx.fillStyle = COLOR.SNAKE;
   snakeBody.forEach((body) => {
@@ -97,6 +101,7 @@ function displaySnake(snakeBody) {
   });
 }
 
+// 顯示網格
 function displayGrid() {
   ctx.lineWidth = strokeWidth;
   ctx.beginPath();
@@ -116,6 +121,7 @@ function displayGrid() {
   ctx.closePath();
 }
 
+// 碰撞偵測
 function isCollidedX(x) {
   if (x >= p0.x && x <= p0.x + (COLS - 1) * cellWidth) {
     return false;
@@ -123,6 +129,8 @@ function isCollidedX(x) {
     return true;
   }
 }
+
+// 碰撞偵測
 function isCollidedY(y) {
   if (y >= p0.y && y <= p0.y + (ROWS - 1) * cellHeight) {
     return false;
@@ -131,6 +139,7 @@ function isCollidedY(y) {
   }
 }
 
+// 切換貪吃蛇移動方向
 function updateDirection(newDir) {
   let currentDir = Object.keys(gameState.direction).find((key) => {
     if (gameState.direction[key] === true) return key;
@@ -149,6 +158,7 @@ function updateDirection(newDir) {
   }
 }
 
+// 更新貪吃蛇位置
 let terminate = false;
 let newPosition = {
   x: gameState.snakeBody[0].x,
@@ -202,6 +212,7 @@ function updateSnakePosition() {
   displaySnake(gameState.snakeBody);
 }
 
+// 定義結束遊戲
 function stopGame() {
   if (terminate) {
     alert("結束遊戲");
@@ -212,10 +223,13 @@ function stopGame() {
   }
 }
 
+// 顯示食物
 function displayFood(x, y) {
   ctx.fillStyle = COLOR.FOOD;
   ctx.fillRect(x, y, cellWidth, cellHeight);
 }
+
+// 隨機取得位置，用於程式開始執行顯示蛇頭與食物的位置，以及隨機顯示食物
 function getRandomPosition() {
   let position = {
     x: Math.floor(Math.random() * COLS) * cellWidth + p0.x,
@@ -224,6 +238,7 @@ function getRandomPosition() {
   return position;
 }
 
+// 碰撞偵測
 function collidedWithFood() {
   if (
     gameState.snakeBody[0].x === gameState.food.x &&
@@ -234,6 +249,7 @@ function collidedWithFood() {
   return false;
 }
 
+// 碰撞偵測
 function collideWithSelf() {
   for (let i = 1; i < gameState.snakeBody.length; i++) {
     if (
@@ -247,6 +263,7 @@ function collideWithSelf() {
   return false;
 }
 
+// 顯示分數
 function displayScore() {
   ctx.fillStyle = COLOR.SCORE;
   ctx.font = "20px serif";
@@ -258,19 +275,23 @@ function displayScore() {
   ctx.textAlign = "right";
 }
 
+// 分數遞增
 function changeScore() {
   gameState.score += 10;
 }
 
+// 速度隨時間遞增
 function speedUp() {
   // console.log(gameState.speed);
   if (gameState.speed > 40) {
     gameState.speed -= 5;
     clearInterval(id);
+    // 更新定時器
     id = setInterval(move, gameState.speed);
   }
 }
 
+// Game Loop
 function move() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
