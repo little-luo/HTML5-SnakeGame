@@ -39,6 +39,13 @@ const COLOR = {
   SCORE: "black",
 };
 
+const opposites = {
+  up: "down",
+  right: "left",
+  bottom: "up",
+  left: "right",
+};
+
 (function init() {
   gameState.snakeBody[0] = getRandomPosition();
   gameState.food = getRandomPosition();
@@ -124,13 +131,21 @@ function isCollidedY(y) {
   }
 }
 
-function updateDirection(str) {
-  gameState.direction.up = false;
-  gameState.direction.right = false;
-  gameState.direction.down = false;
-  gameState.direction.left = false;
-  if (str !== undefined) {
-    gameState.direction[str] = true;
+function updateDirection(newDir) {
+  let currentDir = Object.keys(gameState.direction).find((key) => {
+    if (gameState.direction[key] === true) return key;
+  });
+  // console.log(currentDir);
+  if (
+    newDir !== undefined &&
+    newDir !== currentDir &&
+    newDir !== opposites[currentDir]
+  ) {
+    gameState.direction.up = false;
+    gameState.direction.right = false;
+    gameState.direction.down = false;
+    gameState.direction.left = false;
+    gameState.direction[newDir] = true;
   }
 }
 
